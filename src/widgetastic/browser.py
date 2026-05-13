@@ -1619,6 +1619,46 @@ class Browser:
         self.logger.debug("expect_response(timeout=%d)", timeout)
         return self.page.expect_response(url_or_predicate, timeout=timeout)
 
+    def expect_download(self, predicate=None, *, timeout: int = 30000):
+        """Context manager that waits for a download triggered by a page action.
+
+        Performs an action inside the ``with`` block and waits for the browser
+        to start a file download.  An optional *predicate* can narrow the match
+        to a specific download.
+
+        Args:
+            predicate: Optional callable ``(Download) -> bool``.  When given,
+                the ``Download`` object is passed to *predicate* and only a
+                truthy return is accepted as a match.
+            timeout: Maximum time to wait for the download to start in
+                milliseconds.  Defaults to 30 000 ms (30 s).
+
+        Returns:
+            A context manager whose ``.value`` attribute holds the matched
+            ``Download`` object after the block exits.
+
+        Usage::
+
+            with browser.expect_download() as download_info:
+                view.download_button.click()
+
+            download = download_info.value
+            assert ".csv" in download.suggested_filename
+
+            # With a predicate
+            with browser.expect_download(
+                lambda d: d.suggested_filename.endswith(".pdf"),
+            ) as download_info:
+                view.export_pdf_button.click()
+
+            download_info.value.save_as("/tmp/report.pdf")
+        """
+        self.logger.debug("expect_download(timeout=%d)", timeout)
+        kwargs = {"timeout": timeout}
+        if predicate is not None:
+            kwargs["predicate"] = predicate
+        return self.page.expect_download(**kwargs)
+
     # ====================== ALERT HANDLING (TODO/FUTURE) ======================
     # TODO: Implement alert handling
     # def get_alert(self) -> Alert:

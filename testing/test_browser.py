@@ -1310,6 +1310,41 @@ def test_expect_response(browser):
     browser.page.unroute(mock_url)
 
 
+def test_expect_download(browser):
+    """Test expect_download captures a file download triggered by JS."""
+    with browser.expect_download() as download_info:
+        browser.execute_script(
+            """
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob(['test content'], {type: 'text/plain'}));
+            a.download = 'test_file.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            """
+        )
+    download = download_info.value
+    assert download.suggested_filename == "test_file.txt"
+
+
+def test_expect_download_with_predicate(browser):
+    """Test expect_download with a predicate to match specific downloads."""
+    with browser.expect_download(
+        predicate=lambda d: d.suggested_filename.endswith(".csv"),
+    ) as download_info:
+        browser.execute_script(
+            """
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob(['a,b,c'], {type: 'text/csv'}));
+            a.download = 'report.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            """
+        )
+    assert download_info.value.suggested_filename == "report.csv"
+
+
 # =================== OVERALL FUNCTIONALITY & BrowserParentWrapper TESTS ===================
 
 
