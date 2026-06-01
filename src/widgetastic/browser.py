@@ -2100,7 +2100,7 @@ class WindowManager:
         try:
             wait_for(
                 _check_for_new_pages,
-                num_sec=1.0,  # Short timeout - expect_new_page() should be used for reliability
+                timeout=1.0,  # Short timeout - expect_new_page() should be used for reliability
                 delay=0.05,
                 message="Checking for new pages",
                 silent_failure=True,

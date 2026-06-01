@@ -255,17 +255,17 @@ def test_wait_fill_view_strategy_initialization():
     # Test default initialization
     strategy = WaitFillViewStrategy()
     assert strategy.respect_parent is False
-    assert strategy.wait_widget == "5s"
+    assert strategy.wait_widget == 5
     assert isinstance(strategy._context, FillContext)
 
     # Test initialization with custom wait timeout
-    strategy_custom_wait = WaitFillViewStrategy(wait_widget="10s")
-    assert strategy_custom_wait.wait_widget == "10s"
+    strategy_custom_wait = WaitFillViewStrategy(wait_widget=10)
+    assert strategy_custom_wait.wait_widget == 10
 
     # Test initialization with respect_parent=True
-    strategy_with_parent = WaitFillViewStrategy(respect_parent=True, wait_widget="15s")
+    strategy_with_parent = WaitFillViewStrategy(respect_parent=True, wait_widget=15)
     assert strategy_with_parent.respect_parent is True
-    assert strategy_with_parent.wait_widget == "15s"
+    assert strategy_with_parent.wait_widget == 15
 
 
 def test_wait_fill_view_strategy_do_fill_with_wait(browser):
@@ -274,7 +274,7 @@ def test_wait_fill_view_strategy_do_fill_with_wait(browser):
     class TestForm(View):
         input1 = TextInput(name="input1")
         checkbox1 = Checkbox(id="input2")
-        fill_strategy = WaitFillViewStrategy(wait_widget="5s")
+        fill_strategy = WaitFillViewStrategy(wait_widget=5)
 
     view = TestForm(browser)
     view.fill_strategy.context = FillContext(parent=view, logger=log.null_logger)
@@ -319,7 +319,7 @@ def test_wait_fill_view_strategy_exception_handling(browser, caplog):
         input1 = TextInput(name="input1")
         no_fill_widget = NoFillWidget()
         fill_strategy = WaitFillViewStrategy(
-            wait_widget="0.1s"
+            wait_widget=0.1
         )  # Very short timeout to fail quickly
 
     view = TestForm(browser)
@@ -344,20 +344,22 @@ def test_wait_fill_view_strategy_exception_handling(browser, caplog):
     class TestForm2(View):
         input1 = TextInput(name="input1")
         no_fill_method_widget = NoFillMethodWidget()
-        fill_strategy = WaitFillViewStrategy(wait_widget="2s")
+        fill_strategy = WaitFillViewStrategy(wait_widget=2)
 
     view2 = TestForm2(browser)
     view2.fill_strategy.context = FillContext(parent=view2, logger=log.null_logger)
 
     # This should work - waits for widget, then logs warning about missing fill method
-    values2 = {"input1": "test_value", "no_fill_method_widget": "some_value"}
+    # Use a different value than the one filled in TestForm above to ensure the fill
+    # actually changes the field (returning True), rather than a no-op (returning False).
+    values2 = {"input1": "test_value_2", "no_fill_method_widget": "some_value"}
 
     with caplog.at_level("WARNING"):
         result = view2.fill_strategy.do_fill(values2)
 
     # The input1 should be filled successfully
     assert result is True  # Should return True since input1 was filled successfully
-    assert view2.input1.read() == "test_value"
+    assert view2.input1.read() == "test_value_2"
 
     # Should log warning about widget without fill method
     warning_logs = [record for record in caplog.records if record.levelname == "WARNING"]
@@ -396,13 +398,13 @@ def test_view_with_custom_wait_strategy(browser):
         input2 = TextInput(name="fill_with_2")
         checkbox1 = Checkbox(id="input2")
 
-        fill_strategy = WaitFillViewStrategy(wait_widget="3s")
+        fill_strategy = WaitFillViewStrategy(wait_widget=3)
 
     view = TestForm(browser)
 
     # Should use the custom wait strategy
     assert isinstance(view.fill_strategy, WaitFillViewStrategy)
-    assert view.fill_strategy.wait_widget == "3s"
+    assert view.fill_strategy.wait_widget == 3
 
     # Test that view.fill() works with wait strategy
     result = view.fill({"input1": "wait_integration_test", "checkbox1": False})
@@ -481,7 +483,7 @@ def test_fill_strategy_respect_parent_behavior(browser):
 
     # Parent without respect_parent - child gets default strategy
     class ParentView(View):
-        fill_strategy = WaitFillViewStrategy(wait_widget="10s")  # respect_parent=False by default
+        fill_strategy = WaitFillViewStrategy(wait_widget=10)  # respect_parent=False by default
 
     class ChildView(View):
         input1 = TextInput(name="input1")
@@ -497,7 +499,7 @@ def test_fill_strategy_respect_parent_behavior(browser):
 
     # Parent with respect_parent=True - child inherits parent's strategy
     class ParentViewWithRespectParent(View):
-        fill_strategy = WaitFillViewStrategy(respect_parent=True, wait_widget="10s")
+        fill_strategy = WaitFillViewStrategy(respect_parent=True, wait_widget=10)
 
     class ChildViewInherits(View):
         input1 = TextInput(name="input1")
@@ -509,7 +511,7 @@ def test_fill_strategy_respect_parent_behavior(browser):
     # Child should use parent's strategy since parent.fill_strategy.respect_parent=True
     assert child_view2.fill_strategy is parent_view2.fill_strategy
     assert isinstance(child_view2.fill_strategy, WaitFillViewStrategy)
-    assert child_view2.fill_strategy.wait_widget == "10s"
+    assert child_view2.fill_strategy.wait_widget == 10
 
 
 def test_fill_strategy_error_tolerance(browser, caplog):
