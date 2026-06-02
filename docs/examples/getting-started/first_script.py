@@ -6,6 +6,7 @@ This is a complete, working example that demonstrates core widgetastic concepts.
 # first_script.py
 import json
 import os
+from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 from widgetastic.browser import Browser
@@ -45,6 +46,10 @@ def main():
     # Get headless mode from environment (set by conftest or CI)
     headless = os.getenv("PLAYWRIGHT_HEADLESS", "false").lower() == "true"
 
+    # Use a local HTML form to avoid any external network dependency.
+    form_path = Path(__file__).parent / "pizza_form.html"
+    form_url = form_path.resolve().as_uri()
+
     with sync_playwright() as playwright:
         # Launch browser using Playwright
         browser = playwright.chromium.launch(headless=headless)
@@ -54,8 +59,8 @@ def main():
         # Create widgetastic browser instance
         wt_browser = Browser(page)
 
-        # Navigate to the testing page.
-        wt_browser.url = "https://httpbin.org/forms/post"
+        # Navigate to the local pizza order form.
+        wt_browser.url = form_url
 
         # Initialize the view i.e. Model of the testing page.
         form_view = DemoFormView(wt_browser)
