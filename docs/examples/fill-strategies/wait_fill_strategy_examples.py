@@ -33,7 +33,7 @@ class DynamicFormCustomTimeout(View):
     checkbox1 = Checkbox(id="input2")
 
     # Custom 10-second timeout per widget
-    fill_strategy = WaitFillViewStrategy(wait_widget="10s")
+    fill_strategy = WaitFillViewStrategy(wait_widget=10)
 
 
 view_custom = DynamicFormCustomTimeout(browser)  # noqa: F821

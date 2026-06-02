@@ -548,12 +548,13 @@ class Widget(metaclass=WidgetMetaclass):
             return True
 
     @logged()
-    def wait_displayed(self, timeout="10s", delay=0.2):
+    def wait_displayed(self, timeout=10, delay=0.2):
         """Wait for the element to be displayed. Uses the :py:meth:`is_displayed`
 
         Args:
-            timeout: If you want, you can override the default timeout here
-            delay: override default delay for wait_for iterations
+            timeout: Maximum seconds to wait. Accepts ``int``, ``float``, or
+                ``datetime.timedelta``. Default: ``10`` seconds.
+            delay: Seconds between polling attempts. Default: ``0.2`` seconds.
         """
         ret, _ = wait_for(lambda: self.is_displayed, timeout=timeout, delay=delay)
         return ret

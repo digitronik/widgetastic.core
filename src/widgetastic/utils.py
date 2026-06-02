@@ -1062,7 +1062,7 @@ class WaitFillViewStrategy(DefaultFillViewStrategy):
 
         class DynamicFormView(View):
             # Use wait strategy with 10-second timeout per widget
-            fill_strategy = WaitFillViewStrategy(wait_widget="10s")
+            fill_strategy = WaitFillViewStrategy(wait_widget=10)
 
             user_type = Select("#user-type")
             username = TextInput("#username")
@@ -1093,23 +1093,24 @@ class WaitFillViewStrategy(DefaultFillViewStrategy):
         class ConditionalView(View):
             # Custom timeout and parent strategy respect
             fill_strategy = WaitFillViewStrategy(
-                wait_widget="15s",      # Wait up to 15 seconds per widget
+                wait_widget=15,      # Wait up to 15 seconds per widget
                 respect_parent=True     # Use parent's strategy if available
             )
 
             # Widget definitions...
 
-    Timeout Formats:
-    - String format: "5s", "10s", "2m" (seconds, minutes)
-    - Numeric: 5.0 (seconds as float)
-    - Default: "5s" if not specified
+    Timeout:
+        ``wait_widget`` accepts an ``int``, ``float``, or ``datetime.timedelta``
+        specifying the maximum seconds to wait per widget. Default: ``5`` (seconds).
 
     Args:
         respect_parent: If True, uses parent's fill strategy when available
-        wait_widget: Timeout for waiting for each widget to become displayed
+        wait_widget: Timeout (in seconds as ``int``/``float``, or a
+            ``datetime.timedelta``) for waiting for each widget to become
+            displayed. Default: ``5`` seconds.
     """
 
-    def __init__(self, respect_parent=False, wait_widget="5s"):
+    def __init__(self, respect_parent=False, wait_widget=5):
         self.wait_widget = wait_widget
         super().__init__(respect_parent=respect_parent)
 

@@ -10,7 +10,7 @@ from widgetastic.widget import View, TextInput
 
 # Example: Without respect_parent (default behavior)
 class ParentViewNoInherit(View):
-    fill_strategy = WaitFillViewStrategy(wait_widget="10s")
+    fill_strategy = WaitFillViewStrategy(wait_widget=10)
 
     @View.nested
     class ChildView(View):
@@ -26,7 +26,7 @@ print(f"Child strategy: {type(parent_view.ChildView.fill_strategy).__name__}")
 # Example: With Inheritance
 # Example: With respect_parent=True
 class ParentViewWithInherit(View):
-    fill_strategy = WaitFillViewStrategy(respect_parent=True, wait_widget="10s")
+    fill_strategy = WaitFillViewStrategy(respect_parent=True, wait_widget=10)
 
     @View.nested
     class ChildView(View):
