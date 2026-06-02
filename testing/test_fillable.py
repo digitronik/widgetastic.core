@@ -318,9 +318,7 @@ def test_wait_fill_view_strategy_exception_handling(browser, caplog):
     class TestForm(View):
         input1 = TextInput(name="input1")
         no_fill_widget = NoFillWidget()
-        fill_strategy = WaitFillViewStrategy(
-            wait_widget=0.1
-        )  # Very short timeout to fail quickly
+        fill_strategy = WaitFillViewStrategy(wait_widget=0.1)  # Very short timeout to fail quickly
 
     view = TestForm(browser)
     view.fill_strategy.context = FillContext(parent=view, logger=log.null_logger)
