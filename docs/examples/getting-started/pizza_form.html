@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pizza Order Form</title>
+</head>
+<body id="page-body">
+  <form id="pizza-form" method="post">
+    <label for="custname">Customer name:</label>
+    <input type="text" id="custname" name="custname"><br>
+
+    <label for="custtel">Telephone:</label>
+    <input type="tel" id="custtel" name="custtel"><br>
+
+    <label for="custemail">E-mail address:</label>
+    <input type="email" id="custemail" name="custemail"><br>
+
+    <fieldset>
+      <legend>Pizza Size</legend>
+      <label><input type="radio" name="size" value="small"> Small</label>
+      <label><input type="radio" name="size" value="medium"> Medium</label>
+      <label><input type="radio" name="size" value="large"> Large</label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Pizza Toppings</legend>
+      <label><input type="checkbox" name="topping" value="bacon"> Bacon</label>
+      <label><input type="checkbox" name="topping" value="cheese"> Extra Cheese</label>
+      <label><input type="checkbox" name="topping" value="onion"> Onion</label>
+      <label><input type="checkbox" name="topping" value="mushroom"> Mushroom</label>
+    </fieldset>
+
+    <label for="comments">Delivery instructions:</label>
+    <textarea id="comments" name="comments"></textarea><br>
+
+    <button type="submit">Submit order</button>
+  </form>
+
+  <script>
+    document.getElementById('pizza-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var form = e.target;
+      var data = { form: {} };
+
+      // Collect all named fields
+      var fd = new FormData(form);
+      fd.forEach(function (value, key) {
+        if (key in data.form) {
+          // Multiple values for same key -> promote to array
+          if (!Array.isArray(data.form[key])) {
+            data.form[key] = [data.form[key]];
+          }
+          data.form[key].push(value);
+        } else {
+          data.form[key] = value;
+        }
+      });
+
+      document.body.textContent = JSON.stringify(data);
+    });
+  </script>
+</body>
+</html>

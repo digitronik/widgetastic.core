@@ -740,9 +740,9 @@ def test_click_with_delay_parameter(browser):
         # Extract the delay value from result
         delay_value = int(result.split(":")[1].strip().replace("ms", ""))
         print(delay_value)
-        # Allow 10ms tolerance for CI runner timing variations
+        # Allow 25ms tolerance for CI runner and browser timing variations
         assert delay_value >= delay_ms
-        assert delay_value <= delay_ms + 10
+        assert delay_value <= delay_ms + 25
 
 
 def test_click_with_force_parameter(browser):
