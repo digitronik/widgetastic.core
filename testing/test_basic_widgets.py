@@ -213,7 +213,7 @@ def test_table(browser):
     )
 
     assert len(list(view.table.rows(_row__attr=("data-test", "def-345")))) == 1
-    assert len(list(view.table1.rows(_row__attr=("data-test", "def-r345")))) == 1
+    assert len(list(view.table1.rows(_row__attr=("data-test", "def-345")))) == 1
 
     assert len(list(view.table.rows(_row__attr_startswith=("data-test", "abc")))) == 2
     assert len(list(view.table1.rows(_row__attr_startswith=("data-test", "abc")))) == 2
@@ -248,7 +248,7 @@ def test_table(browser):
     )
 
     assert len(list(view.table.rows(_row__attr=("data-test", "abc-345"), column_1="qwer"))) == 0
-    assert len(list(view.table1.rows(_row__attr=("data-test", "abc-r345"), first_name="qwer"))) == 0
+    assert len(list(view.table1.rows(_row__attr=("data-test", "abc-345"), first_name="qwer"))) == 0
 
     with pytest.raises(ValueError):
         list(view.table.rows(_row__papalala=("foo", "bar")))
