@@ -82,13 +82,14 @@ class DefaultPlugin:
         """
         return create_widget_logger(type(self).__name__, self.browser.logger)
 
-    def ensure_page_safe(self, timeout: Union[int, None] = None) -> None:
+    def ensure_page_safe(self, timeout: Optional[Union[int, float]] = None) -> None:
         """Waits for the page to be quiescent, replacing the old JS-based check.
 
         Args:
-            timeout: Provide timeout in seconds.
+            timeout: Maximum time in seconds to wait for networkidle.
+                     Accepts int or float. If None, Playwright's default timeout (30s) is used.
         """
-        timeout_ms = 0 if timeout is None else timeout * 1000
+        timeout_ms = timeout * 1000 if timeout is not None else None
         self.browser.page.wait_for_load_state("networkidle", timeout=timeout_ms)
 
     def after_click(self, element: Locator, locator: LocatorAlias) -> None:
